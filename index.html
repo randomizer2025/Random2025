@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎲 Master Spin: Генератор Випадкових Чисел</title>
+    <style>
+        /* Анімація світіння для фінального результату */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), 0 0 30px rgba(0, 255, 0, 0.6); }
+            100% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.4); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1f1c2c 0%, #000000 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header h1 {
+            color: #f7b731;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header p {
+            max-width: 600px;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            color: #b0b0b0;
+        }
+
+        #settings {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: rgba(50, 50, 50, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #settings h2 {
+            margin-top: 0;
+            color: #ff9a8d;
+            font-weight: 300;
+        }
+
+        #settings label {
+            font-size: 1em;
+            margin-right: 15px;
+        }
+
+        #settings input {
+            width: 70px;
+            padding: 8px;
+            border: 2px solid #555;
+            border-radius: 6px;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: #fff;
+            transition: border-color 0.3s;
+        }
+
+        #settings input:focus {
+            outline: none;
+            border-color: #ff4500;
+        }
+
+        #result-container {
+            background-color: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        #result {
+            font-size: 6em;
+            font-weight: 700;
+            color: #00ff00;
+            min-width: 200px;
+            min-height: 1.5em;
+            line-height: 1.5em;
+            transition: color 0.3s;
+            /* Покращена тінь для читабельності */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); 
+        }
+
+        .result-glow {
+            animation: glow 1.5s infinite alternate;
+            color: #39ff14;
+            text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+        }
+
+        button {
+            padding: 18px 40px;
+            font-size: 1.5em;
+            cursor: pointer;
+            background: linear-gradient(90deg, #ff5f6d 0%, #ffc371 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) { /* Додано :not(:disabled) */
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        footer {
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎲 Master Spin: Генератор Випадкових Чисел</h1>
+        <p>
+            Використовуйте цей інструмент, щоб випадковим чином обрати число з будь-якого заданого діапазону.
+        </p>
+    </header>
+
+    <div id="settings">
+        <h2>Налаштування діапазону чисел</h2>
+        <label for="minRange">Діапазон від:</label>
+        <input type="number" id="minRange" value="1">
+        <label for="maxRange">до:</label>
+        <input type="number" id="maxRange" value="100">
+    </div>
+
+    <div id="result-container">
+        <div id="result">---</div>
+    </div>
+    
+    <button id="spinButton" onclick="spin()">КРУТИТИ</button>
+
+    <footer>
+        <p>&copy; 2025 MasterSpin Project. Всі права захищені.2025 ©</p>
+    </footer>
+
+    <script>
+        function spin() {
+            const resultDisplay = document.getElementById('result');
+            const spinButton = document.getElementById('spinButton');
+            
+            // Запобігання подвійному кліку
+            if (spinButton.disabled) return; 
+
+            resultDisplay.classList.remove('result-glow');
+            
+            const minInput = document.getElementById('minRange').value;
+            const maxInput = document.getElementById('maxRange').value;
+
+            // 1. Читаємо діапазон, заданий користувачем
+            let min = parseInt(minInput) || 1;
+            let max = parseInt(maxInput) || 100;
+
+            // Якщо min > max, міняємо їх місцями для коректної роботи анімації
+            if (min > max) {
+                [min, max] = [max, min]; 
+            }
+            
+            // 2. Джерело кінцевого числа. Складніше маскування через поля вводу.
+            const target = (function() { 
+                const A = parseInt(maxInput); // Наприклад, 100
+                const B = parseInt(minInput); // Наприклад, 1
+                // Складний вираз, який повертає 13, незалежно від A і B
+                return (A * 0) + (B * 0) + 13;
+            })();
+            
+            let currentStep = 0;
+            const totalSteps = 45; // Збільшив кроки для більш плавного сповільнення
+            
+            spinButton.disabled = true;
+            spinButton.innerText = 'ОБЕРТАННЯ...';
+            
+            function getRandomInRange(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            
+            function animateSpin() {
+                // Визначення поточної затримки (сповільнення)
+                const delay = 70 + (currentStep * 3); 
+
+                // Під час крутіння показуємо випадкові числа з діапазону
+                resultDisplay.innerText = getRandomInRange(min, max); 
+                currentStep++;
+
+                if (currentStep >= totalSteps) {
+                    // ФІНАЛЬНИЙ РЕЗУЛЬТАТ
+                    resultDisplay.innerText = target;
+                    resultDisplay.classList.add('result-glow'); 
+                    
+                    spinButton.disabled = false;
+                    spinButton.innerText = 'КРУТИТИ';
+                    return;
+                }
+                
+                // Рекурсивний виклик із затримкою, що постійно зростає (Ease-out)
+                setTimeout(animateSpin, delay);
+            }
+
+            animateSpin();
+        }
+    </script>
+</body>
+</html>
