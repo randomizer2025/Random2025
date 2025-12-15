@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Генератор Чисел</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #222; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { margin-bottom: 50px; }
+        #result { font-size: 100px; font-weight: bold; margin: 20px 0; color: #00ff00; min-height: 120px; }
+        button { padding: 15px 35px; font-size: 24px; cursor: pointer; background: #ff4500; border: none; border-radius: 8px; color: white; transition: background 0.2s; }
+        button:active { background: #cc3700; }
+        #settings { margin-bottom: 20px; padding: 10px; border: 1px solid #444; border-radius: 5px; background-color: #333; }
+        #settings label { margin-right: 10px; }
+        #settings input { width: 60px; padding: 5px; border: none; border-radius: 3px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="settings">
+        <h2>Налаштування діапазону чисел рандомайзеру</h2>
+        <label for="minRange">Діапазон від:</label>
+        <input type="number" id="minRange" value="1">
+        <label for="maxRange">до:</label>
+        <input type="number" id="maxRange" value="100">
+    </div>
+
+    <h1>Результат рулетки</h1>
+    <div id="result">---</div>
+    <button onclick="spin()">Крутити!</button>
+
+    <script>
+        function spin() {
+            const resultDisplay = document.getElementById('result');
+            
+            // 1. Читаємо діапазон, заданий користувачем
+            const min = parseInt(document.getElementById('minRange').value) || 1;
+            const max = parseInt(document.getElementById('maxRange').value) || 100;
+            
+            // 2. ФІКСОВАНЕ ЦІЛЬОВЕ ЧИСЛО (ЗАВЖДИ 13)
+            const target = 13; 
+            
+            let count = 0;
+            let maxSpins = 30; 
+            
+            // Функція генерації випадкового числа в заданому діапазоні (лише для анімації)
+            function getRandomInRange(min, max) {
+                const actualMin = Math.min(min, max);
+                const actualMax = Math.max(min, max);
+                return Math.floor(Math.random() * (actualMax - actualMin + 1)) + actualMin;
+            }
+            
+            // Запускаємо анімацію
+            let interval = setInterval(() => {
+                // Під час крутіння показуємо випадкові числа з діапазону
+                resultDisplay.innerText = getRandomInRange(min, max); 
+                count++;
+
+                if (count >= maxSpins) {
+                    clearInterval(interval);
+                    // ФІНАЛЬНИЙ РЕЗУЛЬТАТ: ЗАВЖДИ 13
+                    resultDisplay.innerText = target;
+                }
+            }, 75); 
+        }
+    </script>
+</body>
+</html>
